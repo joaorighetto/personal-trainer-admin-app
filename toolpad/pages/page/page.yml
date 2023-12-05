@@ -1,0 +1,574 @@
+apiVersion: v1
+kind: page
+spec:
+  id: Q_NHiPg
+  title: Default page
+  content:
+    - component: PageRow
+      name: Headers
+      props:
+        justifyContent: start
+      children:
+        - component: Image
+          name: image
+          layout:
+            columnSize: 0.15574324258535635
+          props:
+            width: 88
+            height: 60
+            src:
+              $$jsExpression: >
+                "https://i.postimg.cc/X7mFByby/a9684b8fd91436f9b33d78d5a68a13eb.jpg"
+        - component: Text
+          name: text
+          layout:
+            columnSize: 1.8442567574146436
+            horizontalAlign: center
+            verticalAlign: center
+          props:
+            variant: h1
+            value: BodyForge admin app
+    - component: Text
+      name: text1
+      props:
+        value: This is a support application to manage clients.
+        variant: body2
+    - component: Container
+      name: welcomeContainer
+      children:
+        - component: PageRow
+          name: pageRow1
+          props:
+            justifyContent: start
+          children:
+            - component: Image
+              name: image1
+              layout:
+                columnSize: 0.1558889375102769
+                horizontalAlign: center
+              props:
+                width: 75
+                height: 75
+                src:
+                  $$jsExpression: |
+                    getAvatarUrl.data.publicUrl
+                fit: contain
+            - component: PageColumn
+              name: pageColumn
+              layout:
+                columnSize: 1.844111062489723
+              children:
+                - component: Text
+                  name: text16
+                  layout:
+                    columnSize: 1
+                  props:
+                    mode: null
+                    value:
+                      $$jsExpression: |
+                        "Welcome " + getTrainerProfile.data[0].full_name + "!"
+                - component: Text
+                  name: text17
+                  props:
+                    value: <sub>[Edit profile]()</sub>
+                    mode: markdown
+                  layout:
+                    verticalAlign: start
+                    horizontalAlign: start
+    - component: Container
+      name: authContainer
+      children:
+        - component: TextField
+          name: textField
+          props:
+            variant: outlined
+            label: Email
+            defaultValue:
+              $$jsExpression: |
+                "jany74@yahoo.com"
+          layout:
+            columnSize: 1
+        - component: TextField
+          name: textField1
+          layout:
+            columnSize: 1
+          props:
+            label: Password
+            password: true
+            defaultValue:
+              $$jsExpression: |
+                "uIFLPdmpatytPFYfySOx"
+            fullWidth: false
+            disabled: false
+            isRequired: false
+            variant: outlined
+      props:
+        visible: false
+    - component: Container
+      name: ClientsList
+      props:
+        visible: true
+      children:
+        - component: Text
+          name: text2
+          props:
+            variant: h3
+            value: Clients list
+            mode: text
+          layout:
+            columnSize: 1.3397762487359135
+            horizontalAlign: start
+            verticalAlign: center
+        - component: PageColumn
+          name: pageColumn5
+          layout:
+            columnSize: 1.0007872801951165
+          children:
+            - component: DataGrid
+              name: clientsGrid
+              layout:
+                columnSize: 1
+              props:
+                rows:
+                  $$jsExpression: |
+                    clientsRoutines.data.map((client) => {
+                      return {
+                        ...client,
+                        profiles: client.profiles.full_name,
+                      }
+                    })
+                    // clientsRoutines.data[0].clients((clients) => {
+                    //   return {
+                    //     ...clients,
+                    //     profiles: clients.profiles.full_name,
+                    //     user_id: clients.profiles.id,
+                    //   }
+                    // })
+                columns:
+                  - field: profiles
+                    type: string
+                    width: 168
+                    headerName: Client
+                hideToolbar: true
+                loading:
+                  $$jsExpression: |
+                    clientsRoutines.isFetching || clientsRoutines.isLoading
+                height: 270
+            - component: PageRow
+              name: pageRow6
+              props:
+                justifyContent: start
+              children:
+                - component: Button
+                  name: button
+                  layout:
+                    columnSize: 1
+                    horizontalAlign: center
+                    verticalAlign: center
+                  props:
+                    variant: outlined
+                    fullWidth: true
+                    color: secondary
+                    content: refresh
+                    size: medium
+                    onClick:
+                      $$jsExpressionAction: clientsRoutines.refetch();
+                    loading: null
+                - component: Button
+                  name: button1
+                  layout:
+                    columnSize: 1
+                    horizontalAlign: center
+                    verticalAlign: center
+                  props:
+                    fullWidth: true
+                    size: medium
+                    content: Remove client
+                    disabled:
+                      $$jsExpression: |
+                        Boolean(clientsGrid.selection?.user_id)
+                    onClick:
+                      $$jsExpressionAction: removeClients.call()
+                    loading:
+                      $$jsExpression: |
+                        removeClients.isFetching || removeClients.isLoading
+                    color: secondary
+        - component: Container
+          name: SpacingContainer
+    - component: Container
+      name: RoutineSheet
+      props:
+        visible:
+          $$jsExpression: |
+            Boolean(clientsGrid.selection?.training_routines.length > 0)
+      children:
+        - component: Text
+          name: text3
+          props:
+            value:
+              $$jsExpression: |
+                clientsGrid.selection?.profiles + "'s routine"
+            variant: h4
+            loading: false
+        - component: PageRow
+          name: pageRow3
+          props:
+            justifyContent: start
+          children:
+            - component: PageColumn
+              name: pageColumn3
+              layout:
+                columnSize: 1.0011103759072197
+              children:
+                - component: Text
+                  name: text9
+                  layout:
+                    columnSize: 1
+                    horizontalAlign: start
+                    verticalAlign: center
+                  props:
+                    value: "Structure:"
+                    variant: body1
+                - component: Paper
+                  name: paper1
+                  layout:
+                    columnSize: 1
+                  props:
+                    elevation: 5
+                  children:
+                    - component: Text
+                      name: text4
+                      layout:
+                        columnSize: 1
+                        horizontalAlign: center
+                        verticalAlign: center
+                      props:
+                        value:
+                          $$jsExpression: >
+                            clientsGrid.selection?.training_routines[0].structure
+                            ?? ""
+                        variant: h6
+            - component: PageColumn
+              name: pageColumn1
+              layout:
+                columnSize: 0.9982356432491399
+              children:
+                - component: Text
+                  name: text11
+                  layout:
+                    columnSize: 1
+                    horizontalAlign: start
+                    verticalAlign: center
+                  props:
+                    variant: body1
+                    value: "Difficulty:"
+                - component: Paper
+                  name: paper2
+                  layout:
+                    columnSize: 1
+                  props:
+                    elevation: 5
+                  children:
+                    - component: Text
+                      name: text5
+                      layout:
+                        columnSize: 1
+                        horizontalAlign: center
+                        verticalAlign: center
+                      props:
+                        value:
+                          $$jsExpression: >
+                            clientsGrid.selection?.training_routines[0].difficulty
+                            ?? ""
+                        variant: h6
+            - component: PageColumn
+              name: pageColumn2
+              layout:
+                columnSize: 1.0006539808436403
+              children:
+                - component: Text
+                  name: text10
+                  layout:
+                    columnSize: 1
+                    horizontalAlign: start
+                    verticalAlign: center
+                  props:
+                    value: "Goal:"
+                    variant: body1
+                - component: Paper
+                  name: paper3
+                  layout:
+                    columnSize: 1
+                  props:
+                    elevation: 5
+                  children:
+                    - component: Text
+                      name: text6
+                      layout:
+                        columnSize: 1
+                        horizontalAlign: center
+                        verticalAlign: center
+                      props:
+                        value:
+                          $$jsExpression: >
+                            clientsGrid.selection?.training_routines[0].goal ??
+                            ""
+                        variant: h6
+        - component: Text
+          name: text7
+          props:
+            value: "Notes:"
+        - component: Paper
+          name: paper
+          props:
+            elevation: 5
+          children:
+            - component: Text
+              name: text8
+              props:
+                value:
+                  $$jsExpression: |
+                    clientsGrid.selection?.training_routines[0].notes ?? ""
+        - component: Container
+          name: container2
+          layout:
+            columnSize: 1
+          children:
+            - component: PageRow
+              name: pageRow2
+              props:
+                justifyContent: start
+              children:
+                - component: PageColumn
+                  name: pageColumn4
+                  layout:
+                    columnSize: 1
+                  children:
+                    - component: Text
+                      name: text13
+                      layout:
+                        columnSize: 1
+                        horizontalAlign: center
+                      props:
+                        value: "Sessions:"
+                        variant: h6
+                    - component: Tabs
+                      name: sessionsTab
+                      layout:
+                        horizontalAlign: center
+                      props:
+                        tabs:
+                          $$jsExpression: >
+                            clientsGrid.selection?.training_routines[0].training_sessions.map((session)
+                            => {
+                              return {
+                                title: session.tag,
+                                name: session.id,
+                              }
+                            })
+                        defaultValue:
+                          $$jsExpression: |
+                            sessionsTab.tabs[0].name
+                    - component: Container
+                      name: container
+                      props:
+                        visible:
+                          $$jsExpression: >
+                            !(sessionExercises.isFetching ||
+                            sessionExercises.isLoading)
+                      children:
+                        - component: PageRow
+                          name: pageRow5
+                          props:
+                            justifyContent: start
+                          children:
+                            - component: Container
+                              name: container4
+                              layout:
+                                columnSize: 0.49380530973451325
+                            - component: List
+                              name: list
+                              layout:
+                                columnSize: 1.5061946902654868
+                              props:
+                                itemCount:
+                                  $$jsExpression: |
+                                    sessionExercises.data.length
+                                disablePadding: false
+                                renderItem:
+                                  $$template:
+                                    - component: PageRow
+                                      name: pageRow
+                                      props:
+                                        justifyContent: start
+                                      children:
+                                        - component: PageColumn
+                                          name: pageColumn6
+                                          layout:
+                                            columnSize: 1.3538840937114673
+                                          children:
+                                            - component: Image
+                                              name: image2
+                                              props:
+                                                width: 600
+                                                height: 3
+                                                loading: false
+                                                fit: fill
+                                                src:
+                                                  $$jsExpression: >
+                                                    "https://www.colorhexa.com/3fcf8e.png"
+                                            - component: Text
+                                              name: text14
+                                              layout:
+                                                columnSize: 1
+                                                horizontalAlign: center
+                                                verticalAlign: center
+                                              props:
+                                                value:
+                                                  $$jsExpression: >
+                                                    "**" +
+                                                    sessionExercises.data[i].exercises.name
+                                                    + "**"
+                                                mode: markdown
+                                            - component: PageRow
+                                              name: pageRow4
+                                              props:
+                                                justifyContent: start
+                                              children:
+                                                - component: Metric
+                                                  name: metric1
+                                                  layout:
+                                                    columnSize: 0.9399657635359671
+                                                  props:
+                                                    value:
+                                                      $$jsExpression: >
+                                                        sessionExercises.data[i].interval_in_seconds
+                                                    label: Rest
+                                                    fullWidth: true
+                                                    caption: null
+                                                - component: Metric
+                                                  name: metric2
+                                                  layout:
+                                                    columnSize: 1.0300223636352215
+                                                  props:
+                                                    value:
+                                                      $$jsExpression: >
+                                                        sessionExercises.data[i].reps
+                                                    label: Repetitions
+                                                    fullWidth: true
+                                                - component: Metric
+                                                  name: metric
+                                                  props:
+                                                    label: Weight
+                                                    value:
+                                                      $$jsExpression: >
+                                                        sessionExercises.data[i].weight
+                                                    fullWidth: true
+                                                  layout:
+                                                    columnSize: 1.0300118728288115
+                                        - component: Container
+                                          name: container3
+                                          layout:
+                                            columnSize: 0.6461159062885327
+    - component: Container
+      name: NoRoutineContainer
+      props:
+        visible:
+          $$jsExpression: |
+            Boolean(clientsGrid.selection?.training_routines.length == 0)
+      children:
+        - component: Text
+          name: text12
+          layout:
+            horizontalAlign: center
+            verticalAlign: center
+          props:
+            value: The client you selected has no routines yet!
+            variant: h4
+        - component: Container
+          name: container1
+  queries:
+    - name: clientsFeedbacks
+      query:
+        kind: local
+        function: supabase.ts#clientsFeedbacksCounter
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              textField.value
+        - name: password
+          value:
+            $$jsExpression: |
+              textField1.value
+    - name: clientsRoutines
+      query:
+        function: clients.ts#clientsRoutines
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField.value : ""
+        - name: password
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField1.value : ""
+    - name: removeClients
+      query:
+        function: clients.ts#removeClient
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField.value : ""
+        - name: password
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField1.value : ""
+        - name: client_id
+          value:
+            $$jsExpression: |
+              clientsGrid.selection?.id
+      mode: mutation
+    - name: sessionExercises
+      query:
+        function: exercises.ts#getSessionExercises
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField.value : ""
+        - name: password
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField1.value : ""
+        - name: session_id
+          value:
+            $$jsExpression: |
+              sessionsTab.value
+    - name: getTrainerProfile
+      query:
+        function: trainers.ts#getTrainerProfile
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField.value : ""
+        - name: password
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField1.value : ""
+    - name: getAvatarUrl
+      query:
+        function: trainers.ts#getAvatarPublicUrl
+        kind: local
+      parameters:
+        - name: path
+          value:
+            $$jsExpression: |
+              getTrainerProfile.data[0].avatar_url
+  display: shell
