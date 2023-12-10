@@ -5,7 +5,7 @@ const supabaseKey = process.env.SUPABASE_KEY;
 export const defaultEmail = process.env.EMAIL;
 export const defaultPassword = process.env.PASSWORD;
 
-export let supabase = createClient(supabaseUrl, supabaseKey ?? '');
+export const supabase = createClient(supabaseUrl, supabaseKey ?? '');
 
 
 export async function logIn(email, password) {
@@ -17,5 +17,13 @@ export async function logIn(email, password) {
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: signInEmail,
     password: signInPassword,
+  });
+
+  const access_token = authData.session?.access_token ?? '';
+  const refresh_token = authData.session?.refresh_token ?? '';
+  
+  supabase.auth.setSession({
+    access_token,
+    refresh_token
   });
 }

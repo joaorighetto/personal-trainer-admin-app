@@ -4,7 +4,7 @@ spec:
   options:
     palette:
       primary:
-        main: "#fff"
+        main: "#3fcf8e"
         contrastText: rgba(0, 0, 0, 0.87)
       secondary:
         main: "#3fcf8e"

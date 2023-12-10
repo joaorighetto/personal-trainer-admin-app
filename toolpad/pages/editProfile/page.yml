@@ -1,0 +1,141 @@
+apiVersion: v1
+kind: page
+spec:
+  id: y6gRWAM
+  title: editProfile
+  display: shell
+  content:
+    - component: Text
+      name: fullName
+      props:
+        value: "Full Name:"
+        variant: body1
+    - component: Form
+      name: form
+      props:
+        formControlsAlign: start
+        submitButtonText: Update
+        onSubmit:
+          $$jsExpressionAction: updateProfile.call() && getTrainerProfile.refetch()
+        formControlsFullWidth: false
+        hasResetButton: false
+      children:
+        - component: TextField
+          name: textField
+          props:
+            defaultValue:
+              $$jsExpression: |
+                getTrainerProfile.data[0].full_name
+            name: full_name
+            minLength: 3
+            isInvalid: false
+            disabled: false
+        - component: Text
+          name: website
+          props:
+            value: "Website:"
+        - component: TextField
+          name: textField1
+          props:
+            defaultValue:
+              $$jsExpression: |
+                getTrainerProfile.data[0].website
+            label: ""
+            name: website
+            isInvalid:
+              $$jsExpression: |
+                !/^(ftp|http|https):\/\/[^ "]+$/.test(textField1.value)
+    - component: Container
+      name: container
+    - component: Text
+      name: text
+      props:
+        value: "Avatar:"
+    - component: Image
+      name: image
+      props:
+        src:
+          $$jsExpression: |
+            query.data.publicUrl
+        height: 100
+        width: 100
+      layout:
+        horizontalAlign: start
+        verticalAlign: end
+    - component: FilePicker
+      name: filePicker
+      props:
+        multiple: false
+        isRequired: false
+        name: avatar_url
+        label: ""
+    - component: Button
+      name: button
+      props:
+        content: Update avatar
+        size: medium
+        onClick:
+          $$jsExpressionAction: updateAvatar.call() && getTrainerProfile.refetch()
+  queries:
+    - name: query
+      query:
+        function: trainers.ts#getAvatarPublicUrl
+        kind: local
+      parameters:
+        - name: path
+          value:
+            $$jsExpression: |
+              getTrainerProfile.data[0].avatar_url
+    - name: getTrainerProfile
+      query:
+        function: trainers.ts#getTrainerProfile
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              ""
+        - name: password
+          value:
+            $$jsExpression: |
+              ""
+    - name: updateProfile
+      query:
+        kind: local
+        function: trainers.ts#updateTrainerProfile
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              ""
+        - name: password
+          value:
+            $$jsExpression: |
+              ""
+        - name: full_name
+          value:
+            $$jsExpression: |
+              textField.value
+        - name: website
+          value:
+            $$jsExpression: |
+              textField1.value
+      mode: mutation
+    - name: updateAvatar
+      query:
+        function: trainers.ts#updateAvatar
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              ""
+        - name: password
+          value:
+            $$jsExpression: |
+              ""
+        - name: file
+          value:
+            $$jsExpression: |
+              filePicker.value[0]
+      mode: mutation

@@ -62,32 +62,33 @@ spec:
                   name: text16
                   layout:
                     columnSize: 1
+                    verticalAlign: center
                   props:
                     mode: null
                     value:
                       $$jsExpression: |
                         "Welcome " + getTrainerProfile.data[0].full_name + "!"
                 - component: Text
-                  name: text17
+                  name: link
                   props:
-                    value: <sub>[Edit profile]()</sub>
-                    mode: markdown
-                  layout:
-                    verticalAlign: start
-                    horizontalAlign: start
+                    mode: link
+                    value: Edit profile
+                    href: editProfile
     - component: Container
       name: authContainer
+      props:
+        visible: false
       children:
         - component: TextField
           name: textField
+          layout:
+            columnSize: 1
           props:
             variant: outlined
             label: Email
             defaultValue:
               $$jsExpression: |
                 "jany74@yahoo.com"
-          layout:
-            columnSize: 1
         - component: TextField
           name: textField1
           layout:
@@ -102,8 +103,6 @@ spec:
             disabled: false
             isRequired: false
             variant: outlined
-      props:
-        visible: false
     - component: Container
       name: ClientsList
       props:
@@ -119,80 +118,75 @@ spec:
             columnSize: 1.3397762487359135
             horizontalAlign: start
             verticalAlign: center
-        - component: PageColumn
-          name: pageColumn5
+        - component: DataGrid
+          name: clientsGrid
+          layout:
+            columnSize: 1
+          props:
+            rows:
+              $$jsExpression: |
+                clientsRoutines.data.map((client) => {
+                  return {
+                    ...client,
+                    profiles: client.profiles.full_name,
+                  }
+                })
+                // clientsRoutines.data[0].clients((clients) => {
+                //   return {
+                //     ...clients,
+                //     profiles: clients.profiles.full_name,
+                //     user_id: clients.profiles.id,
+                //   }
+                // })
+            columns:
+              - field: profiles
+                type: string
+                width: 168
+                headerName: Client
+            hideToolbar: true
+            loading: null
+            height: 270
+        - component: PageRow
+          name: pageRow6
           layout:
             columnSize: 1.0007872801951165
+          props:
+            justifyContent: start
           children:
-            - component: DataGrid
-              name: clientsGrid
+            - component: Button
+              name: button
               layout:
                 columnSize: 1
+                horizontalAlign: center
+                verticalAlign: center
               props:
-                rows:
+                variant: outlined
+                fullWidth: true
+                color: secondary
+                content: refresh
+                size: medium
+                onClick:
+                  $$jsExpressionAction: clientsRoutines.refetch();
+                loading: null
+            - component: Button
+              name: button1
+              layout:
+                columnSize: 1
+                horizontalAlign: center
+                verticalAlign: center
+              props:
+                fullWidth: true
+                size: medium
+                content: Remove client
+                disabled:
                   $$jsExpression: |
-                    clientsRoutines.data.map((client) => {
-                      return {
-                        ...client,
-                        profiles: client.profiles.full_name,
-                      }
-                    })
-                    // clientsRoutines.data[0].clients((clients) => {
-                    //   return {
-                    //     ...clients,
-                    //     profiles: clients.profiles.full_name,
-                    //     user_id: clients.profiles.id,
-                    //   }
-                    // })
-                columns:
-                  - field: profiles
-                    type: string
-                    width: 168
-                    headerName: Client
-                hideToolbar: true
+                    Boolean(clientsGrid.selection?.user_id)
+                onClick:
+                  $$jsExpressionAction: removeClients.call() && clientsRoutines.refetch()
                 loading:
                   $$jsExpression: |
-                    clientsRoutines.isFetching || clientsRoutines.isLoading
-                height: 270
-            - component: PageRow
-              name: pageRow6
-              props:
-                justifyContent: start
-              children:
-                - component: Button
-                  name: button
-                  layout:
-                    columnSize: 1
-                    horizontalAlign: center
-                    verticalAlign: center
-                  props:
-                    variant: outlined
-                    fullWidth: true
-                    color: secondary
-                    content: refresh
-                    size: medium
-                    onClick:
-                      $$jsExpressionAction: clientsRoutines.refetch();
-                    loading: null
-                - component: Button
-                  name: button1
-                  layout:
-                    columnSize: 1
-                    horizontalAlign: center
-                    verticalAlign: center
-                  props:
-                    fullWidth: true
-                    size: medium
-                    content: Remove client
-                    disabled:
-                      $$jsExpression: |
-                        Boolean(clientsGrid.selection?.user_id)
-                    onClick:
-                      $$jsExpressionAction: removeClients.call()
-                    loading:
-                      $$jsExpression: |
-                        removeClients.isFetching || removeClients.isLoading
-                    color: secondary
+                    removeClients.isFetching || removeClients.isLoading
+                color: secondary
         - component: Container
           name: SpacingContainer
     - component: Container
@@ -385,11 +379,11 @@ spec:
                             - component: Container
                               name: container4
                               layout:
-                                columnSize: 0.49380530973451325
+                                columnSize: 0.7459927657231432
                             - component: List
                               name: list
                               layout:
-                                columnSize: 1.5061946902654868
+                                columnSize: 1.5079215131127337
                               props:
                                 itemCount:
                                   $$jsExpression: |
@@ -405,24 +399,10 @@ spec:
                                         - component: PageColumn
                                           name: pageColumn6
                                           layout:
-                                            columnSize: 1.3538840937114673
+                                            columnSize: 1
                                           children:
-                                            - component: Image
-                                              name: image2
-                                              props:
-                                                width: 600
-                                                height: 3
-                                                loading: false
-                                                fit: fill
-                                                src:
-                                                  $$jsExpression: >
-                                                    "https://www.colorhexa.com/3fcf8e.png"
                                             - component: Text
                                               name: text14
-                                              layout:
-                                                columnSize: 1
-                                                horizontalAlign: center
-                                                verticalAlign: center
                                               props:
                                                 value:
                                                   $$jsExpression: >
@@ -430,6 +410,10 @@ spec:
                                                     sessionExercises.data[i].exercises.name
                                                     + "**"
                                                 mode: markdown
+                                              layout:
+                                                columnSize: 1.8000281193221812
+                                                horizontalAlign: center
+                                                verticalAlign: center
                                             - component: PageRow
                                               name: pageRow4
                                               props:
@@ -438,7 +422,7 @@ spec:
                                                 - component: Metric
                                                   name: metric1
                                                   layout:
-                                                    columnSize: 0.9399657635359671
+                                                    columnSize: 0.9694320343374617
                                                   props:
                                                     value:
                                                       $$jsExpression: >
@@ -449,27 +433,41 @@ spec:
                                                 - component: Metric
                                                   name: metric2
                                                   layout:
-                                                    columnSize: 1.0300223636352215
+                                                    columnSize: 1.06116072004433
                                                   props:
                                                     value:
                                                       $$jsExpression: >
                                                         sessionExercises.data[i].reps
                                                     label: Repetitions
                                                     fullWidth: true
+                                                    numberFormat:
+                                                      $$jsExpression: |
+                                                        {
+                                                          kind: "preset"
+                                                          preset: "percent"
+                                                        }
                                                 - component: Metric
                                                   name: metric
+                                                  layout:
+                                                    columnSize: 0.9694072456182079
                                                   props:
                                                     label: Weight
                                                     value:
                                                       $$jsExpression: >
                                                         sessionExercises.data[i].weight
                                                     fullWidth: true
-                                                  layout:
-                                                    columnSize: 1.0300118728288115
-                                        - component: Container
-                                          name: container3
-                                          layout:
-                                            columnSize: 0.6461159062885327
+                                            - component: Image
+                                              name: image3
+                                              props:
+                                                width: 9999999
+                                                height: 3
+                                                loading: false
+                                                fit: fill
+                                                src: https://iili.io/JItTW21.png
+                            - component: Container
+                              name: container5
+                              layout:
+                                columnSize: 0.7460857211641239
     - component: Container
       name: NoRoutineContainer
       props:
@@ -490,8 +488,8 @@ spec:
   queries:
     - name: clientsFeedbacks
       query:
-        kind: local
         function: supabase.ts#clientsFeedbacksCounter
+        kind: local
       parameters:
         - name: email
           value:
@@ -515,6 +513,7 @@ spec:
             $$jsExpression: |
               authContainer.visible ? textField1.value : ""
     - name: removeClients
+      mode: mutation
       query:
         function: clients.ts#removeClient
         kind: local
@@ -531,7 +530,6 @@ spec:
           value:
             $$jsExpression: |
               clientsGrid.selection?.id
-      mode: mutation
     - name: sessionExercises
       query:
         function: exercises.ts#getSessionExercises
@@ -571,4 +569,17 @@ spec:
           value:
             $$jsExpression: |
               getTrainerProfile.data[0].avatar_url
+    - name: logIn
+      query:
+        function: supabase.ts#logIn
+        kind: local
+      parameters:
+        - name: email
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField.value : ""
+        - name: password
+          value:
+            $$jsExpression: |
+              authContainer.visible ? textField1.value : ""
   display: shell
