@@ -12,18 +12,8 @@ export async function logIn(email, password) {
   let signInEmail = email || defaultEmail;
   let signInPassword = password || defaultPassword;
 
-  console.log(signInEmail, signInPassword);
-
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: signInEmail,
     password: signInPassword,
-  });
-
-  const access_token = authData.session?.access_token ?? '';
-  const refresh_token = authData.session?.refresh_token ?? '';
-  
-  supabase.auth.setSession({
-    access_token,
-    refresh_token
   });
 }
